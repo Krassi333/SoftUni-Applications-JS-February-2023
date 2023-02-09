@@ -1,224 +1,174 @@
 const { chromium } = require('playwright-chromium');
 const { expect } = require('chai');
 
-const host = 'http://localhost:3000'; // Application host (NOT service host - that can be anything)
+const host = 'http://localhost:' + 3000; // Application host (NOT service host - that can be anything)
 
 const DEBUG = false;
 const slowMo = 500;
 
 const mockData = {
-  location: [
+  list: [
     {
-      code: 'ny',
-      name: 'New York',
+      _id: 'depot',
+      next: '0361',
+      name: 'Depot',
     },
-  ],
-  today: [
     {
-      forecast: {
-        condition: 'Sunny',
-        high: '19',
-        low: '8',
-      },
-      name: 'New York, USA',
+      _id: '0361',
+      next: '1931',
+      name: 'Krasna Polyana',
     },
-  ],
-  upcomming: [
     {
-      forecast: [
-        {
-          condition: 'Partly sunny',
-          high: '17',
-          low: '6',
-        },
-        {
-          condition: 'Overcast',
-          high: '9',
-          low: '3',
-        },
-        {
-          condition: 'Overcast',
-          high: '7',
-          low: '3',
-        },
-      ],
-      name: 'New York',
+      _id: '1931',
+      next: '2571',
+      name: 'Agriculture High School',
     },
   ],
 };
 
 const endpoints = {
-  locations: '/jsonstore/forecaster/locations',
-  today: (code) => `/jsonstore/forecaster/today/${code}`,
-  upcommig: (code) => `/jsonstore/forecaster/upcoming/${code}`,
+  catalog: (id) => `/jsonstore/bus/schedule/${id}`,
 };
 
 let browser;
-let context;
 let page;
 
 describe('E2E tests', function () {
-  // Setup
-  this.timeout(DEBUG ? 120000 : 7000);
-  before(
-    async () =>
-      (browser = await chromium.launch(
-        DEBUG ? { headless: false, slowMo } : {}
-      ))
-  );
-  after(async () => await browser.close());
+  this.timeout(6000);
+
+  before(async () => {
+    browser = await chromium.launch(DEBUG ? { headless: false, slowMo } : {});
+  });
+  after(async () => {
+    await browser.close();
+  });
   beforeEach(async () => {
-    context = await browser.newContext();
-    setupContext(context);
-    page = await context.newPage();
+    page = await browser.newPage();
   });
   afterEach(async () => {
     await page.close();
-    await context.close();
   });
 
-  // Test proper
-  describe('Forecaster', () => {
-    it('Search location', async () => {
-      const data = mockData.location;
-      const city = mockData.today[0];
-      const { get } = await handle(endpoints.locations);
-      get(data);
-
+  describe('List', () => {
+    it('Click Depart button', async () => {
       await page.goto(host);
-      await page.waitForSelector('#location');
+      const data = mockData.list[0];
+      const { get } = await handle(endpoints.catalog(data._id));
+      get(data);
+      await page.waitForSelector('#depart');
 
-      await page.fill('#location', `${data[0].name}`);
-      await page.click('input[type="button"]');
+      await page.click('[value="Depart"]');
 
-      const { get2 } = await handle(endpoints.today(`${data.code}`));
-      get2(city);
-      await page.waitForSelector('.forecast-data');
+      await page.waitForSelector('.info');
 
-      const info = await page.$$eval(
-        `#current .condition .forecast-data`,
-        (t) => t.map((s) => s.textContent)
+      const search = await page.$$eval(`.info`, (t) =>
+        t.map((s) => s.textContent)
       );
-      await page.waitForSelector('.forecast-data');
 
-      expect(info[0]).to.equal(city.name);
+      await page.waitForSelector('.info');
+      expect(`Next stop ${search[0]}`).to.contains(data.name);
     });
 
-    it('Check current condition info', async () => {
-      const data = mockData.location;
-      const city = mockData.today[0];
-      const { get } = await handle(endpoints.locations);
-      get(data);
-
+    it('Click Depart and Arrive button', async () => {
       await page.goto(host);
-      await page.waitForSelector('#location');
+      const data = mockData.list[0];
+      const { get } = await handle(endpoints.catalog(data._id));
+      get(data);
+      await page.waitForSelector('#depart');
 
-      await page.fill('#location', `${data[0].name}`);
-      await page.click('input[type="button"]');
-      await page.waitForSelector('.forecast-data');
+      await page.click('[value="Depart"]');
 
-      const { get2 } = await handle(endpoints.today(`${data.code}`));
-      get2(city);
+      await page.waitForSelector('#arrive');
 
-      const info = await page.$$eval(
-        `#current .condition .forecast-data`,
-        (t) => t.map((s) => s.textContent)
+      await page.click('[value="Arrive"]');
+
+      const search = await page.$$eval(`.info`, (t) =>
+        t.map((s) => s.textContent)
       );
-      await page.waitForSelector('.forecast-data');
 
-      expect(info[0]).to.equal(city.name);
-      expect(info[1]).to.equal(`${city.forecast.low}°/${city.forecast.high}°`);
-      expect(info[2]).to.equal(city.forecast.condition);
+      await page.waitForSelector('.info');
+      expect(`Arriving at ${search[0]}`).to.contains(data.name);
     });
 
-    it('Check upcomming days', async () => {
-      const data = mockData.location;
-      const city = mockData.upcomming[0];
-      const { get } = await handle(endpoints.locations);
-      get(data);
-
+    it('Check if depart button is disabled before click on it', async () => {
       await page.goto(host);
-      await page.waitForSelector('#location');
+      const data = mockData.list[0];
+      const { get } = await handle(endpoints.catalog(data._id));
+      get(data);
+      await page.waitForSelector('#depart');
 
-      await page.fill('#location', `${data[0].name}`);
-      await page.click('input[type="button"]');
-
-      const { get2 } = await handle(endpoints.upcommig(`${data.code}`));
-      get2(city);
-      await page.waitForSelector('.upcoming');
-
-      const info = await page.$$eval(
-        `#upcoming .forecast-info .upcoming`,
-        (t) => t.map((s) => s.textContent)
+      const search = await page.$$eval(`#depart`, (t) =>
+        t.map((s) => s.disabled)
       );
-      await page.waitForSelector('.upcoming');
 
-      expect(info.length).to.equal(city.forecast.length);
+      await page.waitForSelector('#depart');
+      expect(search[0]).to.be.false;
     });
 
-    it('Check upcoming day info', async () => {
-      const data = mockData.location;
-      const city = mockData.upcomming[0];
-      const { get } = await handle(endpoints.locations);
-      get(data);
-
+    it('Check if depart button is disabled after click on it', async () => {
       await page.goto(host);
-      await page.waitForSelector('#location');
+      const data = mockData.list[0];
+      const { get } = await handle(endpoints.catalog(data._id));
+      get(data);
+      await page.waitForSelector('#depart');
 
-      await page.fill('#location', `${data[0].name}`);
-      await page.click('input[type="button"]');
+      await page.click('[value="Depart"]');
 
-      const { get2 } = await handle(endpoints.upcommig(`${data.code}`));
-      get2(city);
-      await page.waitForSelector('.forecast-data');
+      await page.waitForSelector('#depart');
 
-      const info = await page.$$eval(
-        `#upcoming .forecast-info .upcoming .forecast-data`,
-        (t) => t.map((s) => s.textContent)
+      const search = await page.$$eval(`#depart`, (t) =>
+        t.map((s) => s.disabled)
       );
-      await page.waitForSelector('.forecast-data');
 
-      expect(info[0]).to.equal(
-        `${city.forecast[0].low}°/${city.forecast[0].high}°`
+      await page.waitForSelector('#depart');
+      expect(search[0]).to.be.true;
+    });
+
+    it('Check if arrive button is disabled before click on it', async () => {
+      await page.goto(host);
+      const data = mockData.list[0];
+      const { get } = await handle(endpoints.catalog(data._id));
+      get(data);
+      await page.waitForSelector('#depart');
+
+      await page.click('[value="Depart"]');
+
+      await page.waitForSelector('#arrive');
+
+      const search = await page.$$eval(`#arrive`, (t) =>
+        t.map((s) => s.disabled)
       );
-      expect(info[1]).to.equal(city.forecast[0].condition);
+
+      await page.waitForSelector('#arrive');
+      expect(search[0]).to.be.false;
+    });
+
+    it('Check if arrive button is disabled after click on it', async () => {
+      await page.goto(host);
+      const data = mockData.list[0];
+      const { get } = await handle(endpoints.catalog(data._id));
+      get(data);
+      await page.waitForSelector('#depart');
+
+      await page.click('[value="Depart"]');
+
+      await page.waitForSelector('#arrive');
+
+      await page.click('[value="Arrive"]');
+
+      const search = await page.$$eval(`#arrive`, (t) =>
+        t.map((s) => s.disabled)
+      );
+
+      await page.waitForSelector('#arrive');
+      expect(search[0]).to.be.true;
     });
   });
 });
 
 async function setupContext(context) {
   // Catalog and Details
-  await handleContext(context, endpoints.locations, { get: mockData.location });
-  await handleContext(context, endpoints.today('ny'), {
-    get: mockData.today[0],
-  });
-  await handleContext(context, endpoints.upcommig('ny'), {
-    get: mockData.upcomming[0],
-  });
-
-  await handleContext(context, endpoints.details('1001'), {
-    get: mockData.catalog[0],
-  });
-  await handleContext(context, endpoints.details('1002'), {
-    get: mockData.catalog[1],
-  });
-  await handleContext(context, endpoints.details('1003'), {
-    get: mockData.catalog[2],
-  });
-
-  await handleContext(
-    endpoints.profile('0001'),
-    { get: mockData.catalog.slice(0, 2) },
-    context
-  );
-
-  await handleContext(endpoints.total('1001'), { get: 6 }, context);
-  await handleContext(endpoints.total('1002'), { get: 4 }, context);
-  await handleContext(endpoints.total('1003'), { get: 7 }, context);
-
-  await handleContext(endpoints.own('1001', '0001'), { get: 1 }, context);
-  await handleContext(endpoints.own('1002', '0001'), { get: 0 }, context);
-  await handleContext(endpoints.own('1003', '0001'), { get: 0 }, context);
+  await handleContext(context, endpoints.catalog, { get: mockData.catalog });
 
   // Block external calls
   await context.route(
