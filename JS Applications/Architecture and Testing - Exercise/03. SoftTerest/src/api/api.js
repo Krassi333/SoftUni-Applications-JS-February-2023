@@ -12,7 +12,7 @@ async function request(method, url, body) {
         options.headers['X-Authorization'] = token;
     }
 
-    if (data != undefined) {
+    if (body != undefined) {
         options.headers['Content-Type'] = 'application/json';
         options.body = JSON.stringify(body);
     }
@@ -25,8 +25,9 @@ async function request(method, url, body) {
                 localStorage.removeItem('user');
             };
 
-            let err = res.json();
-            throw new Error(err.message);
+            let err = res.statusText;
+            console.log(err);
+            throw new Error(err);
         }
 
         if (res.status == 204) {
@@ -53,6 +54,6 @@ export {
     get,
     post,
     put,
-    delete as del
+    del 
 }
 

@@ -2,8 +2,8 @@ import * as api from './api.js';
 
 let endpoint = {
     login: 'users/login',
-    register: 'user/register',
-    logout: 'user/logout'
+    register: 'users/register',
+    logout: 'users/logout'
 }
 export async function login(username, password) {
     let user = await api.post(endpoint.login, { username, password });
@@ -17,6 +17,6 @@ export async function register(email, password) {
 }
 
 export async function logout(){
-   await api.get(endpoint.logout);
+   api.get(endpoint.logout);
     localStorage.removeItem('user');
 }
