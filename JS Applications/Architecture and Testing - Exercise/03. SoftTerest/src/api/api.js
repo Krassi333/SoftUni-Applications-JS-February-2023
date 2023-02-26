@@ -2,6 +2,7 @@ let host = 'http://localhost:3030/';
 let user = JSON.parse(localStorage.getItem('user'));
 
 async function request(method, url, body) {
+    debugger
     let options = {
         method,
         headers: {}
