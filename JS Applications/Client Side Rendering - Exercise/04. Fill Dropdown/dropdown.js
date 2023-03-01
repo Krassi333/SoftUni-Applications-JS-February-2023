@@ -34,6 +34,7 @@ function addItem() {
         if (res.status == 200) {
             console.log(await res.json());
             loadData();
+            document.getElementById('itemText').value = '';
         }
     })
 }
