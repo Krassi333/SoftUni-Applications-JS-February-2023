@@ -1,5 +1,6 @@
 import { html, render } from '../node_modules/lit-html/lit-html.js';
 import page from '../node_modules/page/page.mjs';
+import { navBar } from '../src/app.js';
 import { register } from '../src/data.js'
 
 const root = document.getElementById('root');
@@ -39,7 +40,7 @@ export function showRegister() {
 
 async function onSubmit(e) {
     e.preventDefault();
-//debugger
+    //debugger
     let form = document.querySelector('form');
     let formData = new FormData(form);
     let { email, password, rePass } = Object.fromEntries(formData);
@@ -48,7 +49,7 @@ async function onSubmit(e) {
     } else {
         alert("Password and confirm password don't match");
     }
-
+    navBar();
     page.redirect('/')
 
 }

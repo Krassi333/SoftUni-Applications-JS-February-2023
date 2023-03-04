@@ -22,6 +22,8 @@ export async function login(email, password) {
 }
 
 export async function logout() {
+    debugger
+    console.log('here2');
     let res = await api.get(ednpoints.logout);
     sessionStorage.removeItem('user');
     return res;

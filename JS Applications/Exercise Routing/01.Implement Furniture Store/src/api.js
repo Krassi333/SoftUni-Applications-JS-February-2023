@@ -1,7 +1,8 @@
 let host = 'http://localhost:3030/';
 
 async function request(url, options) {
-    //debugger
+    debugger
+    console.log('here 4');
     try {
         let res = await fetch(host + url, options);
         //console.log(res);
@@ -20,7 +21,8 @@ async function request(url, options) {
 }
 
 function getOption(method, body) {
-   // debugger
+    console.log('here 3');
+   debugger
     let option = {
         method,
         headers: {}

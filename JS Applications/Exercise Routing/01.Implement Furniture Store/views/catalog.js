@@ -1,6 +1,8 @@
 import { getAllItems } from '../src/data.js'
 import { html, render } from '../node_modules/lit-html/lit-html.js'
 import { showDetails } from './details.js';
+import { navBar } from '../src/app.js';
+
 
 const root = document.getElementById('root');
 
@@ -33,9 +35,11 @@ const template = (data) => html`
 </div>
 `
 
-export async function showCatalog() {
+export async function showCatalog() { 
+    debugger
+    navBar();
     let data = await getAllItems();
-    //console.log(data);
+   
     render(template(data), root);
 }
 

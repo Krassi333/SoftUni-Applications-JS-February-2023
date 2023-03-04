@@ -48,13 +48,18 @@ export async function showDetails(ctx) {
     let isThisOwner = false;
     let itemOwnerId = data._ownerId;
     let user = JSON.parse(sessionStorage.getItem('user'));
-    let userId = user._id;
 
-    if (itemOwnerId == userId) {
-        isThisOwner = true;
+    if (user) {
+        let userId = user._id;
+
+        if (itemOwnerId == userId) {
+            isThisOwner = true;
+        }
+
     }
-
     render(template(data, isThisOwner), root)
+
+
 }
 
 function delFunction(e) {

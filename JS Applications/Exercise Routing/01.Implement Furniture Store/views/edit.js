@@ -1,6 +1,8 @@
 import { html, render } from '../node_modules/lit-html/lit-html.js'
 import { getItemDetails } from '../src/data.js';
 import page from '../node_modules/page/page.mjs'
+import { validate } from './create.js';
+import { updateItem } from '../src/data.js';
 
 const root = document.getElementById('root');
 
@@ -50,10 +52,11 @@ const template = (data) => html`
     </div>
 </form>
 `
+let id;
 
 export async function showEdit(ctx) {
 
-    const id = ctx.params.itemId;
+    id = ctx.params.itemId;
     let data = await getItemDetails(id);
     console.log(data);
     render(template(data), root);
@@ -62,5 +65,21 @@ export async function showEdit(ctx) {
 function onSubmit(e) {
     e.preventDefault();
 
+    let form = document.querySelector('form');
+    let formData = new FormData(form);
+    let data = {
+        make: formData.get('make'),
+        model: formData.get('model'),
+        year: formData.get('year'),
+        description: formData.get('description'),
+        price: formData.get('price'),
+        img: formData.get('img'),
+        material: formData.get('material')
+    }
 
+    if (validate(data)) {
+        updateItem(id, data);
+        page.redirect('/');
+    }
 }
+

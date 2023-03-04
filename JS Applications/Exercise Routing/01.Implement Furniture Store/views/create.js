@@ -56,7 +56,7 @@ export function showCreate() {
 
 }
 
-async function onSubmit(e) {
+ async function onSubmit(e) {
     e.preventDefault();
 
     let form = document.querySelector('form');
@@ -70,7 +70,7 @@ async function onSubmit(e) {
         img: formData.get('img'),
         material: formData.get('material')
     }
-    debugger
+    
     if (validate(data)) {
         createItem(data);
         page.redirect('/');
@@ -78,24 +78,24 @@ async function onSubmit(e) {
 
 }
 
-function validate(data) {
+export function validate(data) {
     let res = true;
 
-    if (data.make.length < 4) {
+    if (data.make.length < 4 || data.make=='' ) {
         res = false;
         document.getElementById('new-make').setAttribute('class', 'is-invalid');
     } else {
         document.getElementById('new-make').setAttribute('class', 'is-valid');
     }
 
-    if (data.model.length < 4) {
+    if (data.model.length < 4 || data.model=='') {
         res = false;
         document.getElementById('new-model').setAttribute('class', 'is-invalid');
     } else {
         document.getElementById('new-model').setAttribute('class', 'is-valid');
     }
 
-    if (Number(data.year) < 1950 || Number(data.year) > 2050) {
+    if (Number(data.year) < 1950 || Number(data.year) > 2050 || data.year=='') {
         res = false;
         document.getElementById('new-year').setAttribute('class', 'is-invalid');
     } else {
@@ -103,7 +103,7 @@ function validate(data) {
 
     }
 
-if(data.description.length <= 10){
+if(data.description.length <= 10 || data.description=='' ){
     res = false;
     document.getElementById('new-description').setAttribute('class', 'is-invalid');
 } else {
@@ -111,14 +111,14 @@ if(data.description.length <= 10){
 
 }
       
-if(Number(data.price) < 0){
+if(Number(data.price) < 0 || data.price==''){
     res = false;
     document.getElementById('new-price').setAttribute('class', 'is-invalid');
 } else {
     document.getElementById('new-price').setAttribute('class', 'is-valid');
 }
 
-if(data.img == ''){
+if(data.img == '' ){
     res = false;
     document.getElementById('new-image').setAttribute('class', 'is-invalid');
 } else {

@@ -1,3 +1,40 @@
-export function showMyFurnitures(){
-    console.log('MyFurnitures');
+import { html, render } from '../node_modules/lit-html/lit-html.js'
+import { getMyItems } from '../src/data.js';
+
+
+const root = document.getElementById('root');
+
+const template = (data) => html`
+<div class="row space-top">
+    <div class="col-md-12">
+        <h1>My Furniture</h1>
+        <p>This is a list of your publications.</p>
+    </div>
+</div>
+<div class="row space-top">
+    ${data.map(el => html`
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <img src=${el.img} />
+                <p>${el.description}</p>
+                <footer>
+                    <p>Price: <span>${el.price} $</span></p>
+                </footer>
+                <div>
+                    <a href="/details/${el._id}" class="btn btn-info">Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    `)}
+
+</div>
+
+`
+export async function showMyFurnitures() {
+
+    let data = await getMyItems();
+console.log(data);
+    render(template(data), root);
 }
