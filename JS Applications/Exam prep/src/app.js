@@ -4,6 +4,8 @@ import { loginView } from './views/login.js';
 import { catalogView } from './views/catalog.js';
 import { registerView } from './views/register.js';
 import { detailsView } from './views/details.js';
+import { createView } from './views/create.js';
+import { myBooksView } from './views/myBooks.js';
 
 const root = document.getElementById('site-content');
 
@@ -15,7 +17,7 @@ function decoratectx(ctx, next) {
 
 function uppdateNavBar() {
     let user = JSON.parse(localStorage.getItem('user'));
-
+    
     if (user) {
         document.getElementById('guest').style.display = 'none';
         document.getElementById('user').style.display = 'inline-block';
@@ -32,5 +34,7 @@ page('/', catalogView);
 page('/login', loginView);
 page('/register', registerView);
 page('/details', detailsView);
+page('/addBook', createView);
+page('/myBooks', myBooksView);
 
 page.start();

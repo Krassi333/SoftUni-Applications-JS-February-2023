@@ -28,6 +28,7 @@ const template = (onSubmit) => html`
 export async function loginView(ctx) {
 
     ctx.render(template(onSubmit));
+    debugger
     ctx.uppdateNavBar();
 }
 

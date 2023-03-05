@@ -32,6 +32,7 @@ export async function catalogView(ctx) {
         console.log(data);
         
         ctx.render(template(data));
+        ctx.uppdateNavBar();
         
 
 

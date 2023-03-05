@@ -59,6 +59,6 @@ export async function deleteBook(id) {
 
 
 export async function myBooks(userId) {
-    let res = await api.get(`/data/books?where=_ownerId%3D%22${userId}%22&sortBy=_createdOn%20desc`);
+    let res = await api.get(`data/books?where=_ownerId%3D%22${userId}%22&sortBy=_createdOn%20desc`);
     return res;
 }

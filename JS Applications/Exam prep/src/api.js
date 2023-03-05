@@ -2,7 +2,8 @@ const baseURL = 'http://localhost:3030/';
 
 
 async function request(url, options) {
-
+//debugger
+console.log(baseURL+url);
     try {
         let res = await fetch(baseURL + url, options);
 //console.log(await res.json());
@@ -60,3 +61,4 @@ export async function put(url, data) {
 export async function del(url) {
     return request(url, getOption('DELETE'));
 }
+
