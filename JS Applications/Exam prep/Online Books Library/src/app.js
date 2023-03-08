@@ -33,8 +33,10 @@ page(decoratectx);
 page('/', catalogView);
 page('/login', loginView);
 page('/register', registerView);
-page('/details', detailsView);
+//page('/details', detailsView);
 page('/addBook', createView);
 page('/myBooks', myBooksView);
+//debugger
+page('/details/:id',detailsView);
 
 page.start();

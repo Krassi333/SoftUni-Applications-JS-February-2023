@@ -12,7 +12,7 @@ const template = (data) => html`
             <h3>${el.title}</h3>
             <p>Type: ${el.type}</p>
             <p class="img"><img src=${el.imageUrl}></p>
-            <a class="button" href="/details">Details</a>
+            <a class="button" href="/details/${el._id}">Details</a>
         </li>
         `)}
     </ul>`}

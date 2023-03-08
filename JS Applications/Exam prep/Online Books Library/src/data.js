@@ -8,12 +8,13 @@ const endpoints = {
     'getAllBooks': 'data/books',
     'bookDetails': 'data/books/',
     'editBook': 'data/books/',
-    'deleteBook': 'data/books/'
+    'deleteBook': 'data/books/',
+    'likeBook': 'data/likes'
 }
 
 export async function register(email, password) {
-    
-    let res =await api.post(endpoints.register, { email, password });
+
+    let res = await api.post(endpoints.register, { email, password });
     localStorage.setItem('user', JSON.stringify(res));
     return res;
 }
@@ -61,4 +62,21 @@ export async function deleteBook(id) {
 export async function myBooks(userId) {
     let res = await api.get(`data/books?where=_ownerId%3D%22${userId}%22&sortBy=_createdOn%20desc`);
     return res;
+}
+
+export async function addLike(bookId) {
+    let res = await api.post(endpoints.likeBook, bookId);
+    return res;
+}
+
+export async function getAllLikes(bookId) {
+    let res = await api.get(`data/likes?where=bookId%3D%22${bookId}%22&distinct=_ownerId&count`);
+    return res
+}
+
+export async function getMyLikes(bookId) {
+    debugger
+    let userId = JSON.parse(localStorage.getItem('user'))._id;
+    let res = api.get(`data/likes?where=bookId%3D%22${bookId}%22%20and%20_ownerId%3D%22${userId}%22&count`);
+    return res; //return 0 or 1. Depends on that result the [Like] button should be displayed or not. 
 }

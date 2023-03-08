@@ -2,7 +2,7 @@ const baseURL = 'http://localhost:3030/';
 
 
 async function request(url, options) {
-//debugger
+debugger
 console.log(baseURL+url);
     try {
         let res = await fetch(baseURL + url, options);
