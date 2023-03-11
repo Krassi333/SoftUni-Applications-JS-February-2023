@@ -51,9 +51,17 @@ export async function detailsView(ctx) {
 
    async function onDelete(e){
       e.preventDefault();
-      alert('Are you sure you want to delete this product?');
-       deleteProduct(productId);
+      const confirmed = confirm('Are you sure you want to delete this item?');
 
-ctx.page.redirect('/catalog');
+      if(confirmed){
+        deleteProduct(productId);
+        ctx.page.redirect('/catalog');
+      }else{
+        ctx.page.redirect('/details');
+
+      }
+       
+
+
    }
 }

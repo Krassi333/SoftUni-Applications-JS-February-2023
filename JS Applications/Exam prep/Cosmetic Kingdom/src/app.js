@@ -32,7 +32,7 @@ function updateNavBar() {
 
 
 page(decorateCtx);
-
+page.redirect('/');
 page('/', homepageView);
 page('/register', registerView);
 page('/login', loginView);
