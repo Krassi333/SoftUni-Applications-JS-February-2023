@@ -1,14 +1,17 @@
-import * as api from "./api";
-import { clearUser, setUser } from "./util";
+import * as api from "./api.js";
+import { clearUser, setUser } from "./util.js";
 
 export async function login(email, password) {
+
     let res = await api.post('/users/login', { email, password });
     setUser(res);
     return res;
 }
 
 export async function register(email, password) {
-    return res = await api.post('/users/register', { email, password });
+    let res = await api.post('/users/register', { email, password });
+    setUser(res);
+    return res;
 }
 
 export async function logout() {
@@ -18,7 +21,10 @@ export async function logout() {
 }
 
 export async function getAllAlbums() {
-    return await api.get('/data/albums?sortBy=_createdOn%20desc');
+
+    debugger
+     let res=await  api.get('/data/albums?sortBy=_createdOn%20desc');
+     return res
 }
 
 export async function addAlbum(data) {
@@ -26,11 +32,11 @@ export async function addAlbum(data) {
 }
 
 export async function getAlbumById(id) {
-    return api.get('/data/albums/' + id);
+    return await api.get('/data/albums/' + id);
 }
 
 export async function editAlbum(id, data) {
-    return api.post('/data/albums/' + id, data);
+    return await api.post('/data/albums/' + id, data);
 }
 
 export async function delAlbum(id) {

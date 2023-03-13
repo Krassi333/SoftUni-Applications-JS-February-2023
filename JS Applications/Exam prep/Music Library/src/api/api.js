@@ -3,7 +3,8 @@ import { getUser } from './util.js';
 const baseURL = 'http://localhost:3030';
 
 
- async function request(url, options) {
+async function request(url, options) {
+    //debugger
     try {
         let res = await fetch(baseURL + url, options);
 
@@ -22,7 +23,8 @@ const baseURL = 'http://localhost:3030';
     }
 }
 
- async function getOptions(method, body) {
+function getOptions(method, body) {
+    //debugger
     let option = {
         method,
         headers: {}
@@ -38,6 +40,8 @@ const baseURL = 'http://localhost:3030';
     if (user) {
         option.headers['X-Authorization'] = user.accessToken;
     }
+
+    return option;
 }
 
 export async function get(url) {
@@ -53,5 +57,5 @@ export async function post(url, data) {
 }
 
 export async function del(url) {
-    return request(url, options('DELETE'));
+    return request(url, getOptions('DELETE'));
 }
