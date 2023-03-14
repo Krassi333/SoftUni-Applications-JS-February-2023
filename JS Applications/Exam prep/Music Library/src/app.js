@@ -2,7 +2,10 @@
 import { render } from '../node_modules/lit-html/lit-html.js';
 import page from '../node_modules/page/page.mjs';
 import { logout } from './api/data.js';
+import { addAlbumView } from './views/addAlbum.js';
 import { catalogView } from './views/catalog.js';
+import { detailsView } from './views/details.js';
+import { editView } from './views/edit.js';
 import { homeView } from './views/home.js';
 import { loginView } from './views/login.js';
 import { registerView } from './views/register.js';
@@ -39,10 +42,16 @@ page('/home', homeView);
 page('/login', loginView)
 page('/register', registerView);
 page('/catalog', catalogView);
-page('/logout', () => {
-    logout();
-    page.redirect('/catalog');
-})
+page('/logout', async () => {
+    let res = await logout();
+    if (res.status == 204) {
+        updateNavBar();
+        page.redirect('/catalog');
+    }
 
+});
+page('/addAlbum', addAlbumView);
+page('/details/:id', detailsView);
+page('/edit/:id', editView)
 
 page.start();

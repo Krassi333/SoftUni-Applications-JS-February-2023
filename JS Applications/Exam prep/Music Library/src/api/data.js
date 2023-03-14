@@ -21,10 +21,7 @@ export async function logout() {
 }
 
 export async function getAllAlbums() {
-
-    debugger
-     let res=await  api.get('/data/albums?sortBy=_createdOn%20desc');
-     return res
+     return await  api.get('/data/albums?sortBy=_createdOn%20desc');
 }
 
 export async function addAlbum(data) {
@@ -32,11 +29,13 @@ export async function addAlbum(data) {
 }
 
 export async function getAlbumById(id) {
-    return await api.get('/data/albums/' + id);
+    debugger
+    let el=await api.get('/data/albums/' + id);
+    return el;
 }
 
 export async function editAlbum(id, data) {
-    return await api.post('/data/albums/' + id, data);
+    return await api.put('/data/albums/' + id, data);
 }
 
 export async function delAlbum(id) {
