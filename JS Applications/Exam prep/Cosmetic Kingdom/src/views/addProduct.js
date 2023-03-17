@@ -1,6 +1,6 @@
 import { html } from '../../node_modules/lit-html/lit-html.js';
 import { addProduct } from '../api/data.js';
-import { validate } from '../validate.js';
+import { validate } from '../api/validate.js';
 
 const template = (onSubmit) => html`
 <section id="create">
@@ -23,31 +23,23 @@ const template = (onSubmit) => html`
 
 export async function addProductView(ctx) {
     ctx.render(template(onSubmit));
-    ctx.updateNavBar();
 
     async function onSubmit(e) {
         e.preventDefault();
-//debugger
-        let formData = new FormData(e.currentTarget);
 
-        let data = {
-            name: formData.get('name').trim(),
-            imageUrl: formData.get('imageUrl').trim(),
-            category: formData.get('category').trim(),
-            description: formData.get('description').trim(),
-            price: formData.get('price').trim()
+        const formData = new FormData(e.target);
 
+        const data = {
+            name: formData.get('name'),
+            imageUrl: formData.get('imageUrl'),
+            category: formData.get('category'),
+            description: formData.get('description'),
+            price: formData.get('price')
         }
 
         if (validate(data)) {
             await addProduct(data);
             ctx.page.redirect('/catalog');
-        } else {
-            alert('All fields must be fulfill');
         }
-
     }
 }
-
-
-

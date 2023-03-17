@@ -1,8 +1,29 @@
 import { html } from '../../node_modules/lit-html/lit-html.js';
-import { delOffer, didUserApplied, getAllAplications, getOfferById } from '../api/data.js';
+import { addApplication, delOffer, didUserApplied, getAllAplications, getOfferById } from '../api/data.js';
 import { getUser } from '../api/util.js';
 
-const template = (data, isOwner, onDelete) => html`
+const buttonsTemplate = (data, isOwner, onDelete) => {
+
+    if (isOwner) {
+        return html`
+    <div id="action-buttons">
+        <a href="/edit/${data._id}" id="edit-btn">Edit</a>
+        <a href="#" @click=${onDelete} id="delete-btn">Delete</a>
+    </div>`;
+    } else {
+        return null;
+    }
+}
+
+const applyTemplate = (showApplyButton, onApply) => {
+    if (showApplyButton) {
+        return html`<a href="#" @click=${onApply} id="apply-btn">Apply</a>`
+    } else {
+        return null;
+    }
+}
+
+const template = (data, isOwner, onDelete, totalApplications, showApplyButton, onApply) => html`
 <section id="details">
     <div id="details-wrapper">
         <img id="details-img" src=${data.imageUrl} alt="example1" />
@@ -24,25 +45,12 @@ const template = (data, isOwner, onDelete) => html`
             </div>
         </div>
         <p>
-            Applications: <strong id="applications">0</strong>
+            Applications: <strong id="applications">${totalApplications}</strong>
         </p>
 
-        <!--Edit and Delete are only for creator-->
+        ${buttonsTemplate(data, isOwner, onDelete)}
 
-
-        ${isOwner
-        ? html`
-        <!--Edit and Delete are only for creator-->
-        <div id="action-buttons">
-            <a href="/edit/${data._id}" id="edit-btn">Edit</a>
-            <a href="#" @click=${onDelete} id="delete-btn">Delete</a>
-        </div>`
-        : null}
-
-
-        <a href="#" @click=${onApply} id="apply-btn">Apply</a>
-
-
+        ${applyTemplate(showApplyButton, onApply)}
 
     </div>
 </section>
@@ -55,17 +63,21 @@ export async function detailsView(ctx) {
 
     let isOwner = false;
 
-    if (user) {
-
-
-        if (user._id == data._ownerId) isOwner = true;
+    if (user && user._id == data._ownerId) {
+        isOwner = true;
     }
 
+    let totalApplications = await getAllAplications(id);
+    console.log(totalApplications);
 
+    let showApplyButton = false;
 
+    if (user && !isOwner) {
+        showApplyButton = true;
+    }
+    console.log(showApplyButton);
 
-
-    ctx.render(template(data,isOwner, onDelete));
+    ctx.render(template(data, isOwner, onDelete, totalApplications, showApplyButton, onApply));
 
     async function onDelete(e) {
         e.preventDefault();
@@ -73,11 +85,14 @@ export async function detailsView(ctx) {
         let confirmResponce = confirm('Are you sure you want to delete this offer?');
 
         if (confirmResponce) {
-            delOffer(id);
+            await delOffer(id);
             ctx.page.redirect('/catalog');
         }
 
     }
 
-
+    async function onApply() {
+        await addApplication(id);
+        ctx.page.redirect(`/details/${id}`);
+    }
 }

@@ -1,5 +1,6 @@
 import { html } from '../../node_modules/lit-html/lit-html.js';
 import { register } from '../api/data.js';
+import { validateRegisterData } from '../api/validate.js';
 
 const template = (onSubmit) => html`
 <section id="register">
@@ -15,32 +16,24 @@ const template = (onSubmit) => html`
     </div>
 </section>
 `
-let context;
 
 export async function registerView(ctx) {
-    context = ctx;
     ctx.render(template(onSubmit));
-    ctx.updateNavBar();
-}
 
-async function onSubmit(e) {
-    e.preventDefault();
-    console.log('submit');
+    async function onSubmit(e) {
+        e.preventDefault();
 
-    let formData = new FormData(e.target);
+        const formData = new FormData(e.target);
+        const data = {
+            email: formData.get('email'),
+            password: formData.get('password'),
+            rePass: formData.get('re-password')
+        }
 
-    let email = formData.get('email');
-    let password = formData.get('password');
-    let rePass = formData.get('re-password');
-
-    if (email == "" || password == "" || rePass == "") {
-        alert("All fields are required ")
-    } else if (password != rePass) {
-        alert('Passsword and repeat password dont match');
-    } else {
-        await register(email, password);
-        context.page.redirect('/');
+        if (validateRegisterData(data)) {
+            await register(data.email, data.password);
+            ctx.updateNavBar();
+            ctx.page.redirect('/catalog');
+        }
     }
-
-
 }

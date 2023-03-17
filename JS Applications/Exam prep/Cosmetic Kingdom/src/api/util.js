@@ -1,15 +1,15 @@
-export function getUser() {
+export  function getUser() {
     let user = localStorage.getItem('user');
-
+    
     if (user) {
         return JSON.parse(user);
     }
 }
 
-export function setUser(data) {
+export  function setUser(data) {
     localStorage.setItem('user', JSON.stringify(data));
 }
 
-export function clearUser() {
+export  function clearUser() {
     localStorage.removeItem('user');
 }

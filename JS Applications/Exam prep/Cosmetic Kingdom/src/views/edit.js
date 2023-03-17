@@ -1,6 +1,6 @@
 import { html } from '../../node_modules/lit-html/lit-html.js';
 import { editProduct, getProductById } from '../api/data.js';
-import { validate } from '../validate.js';
+import { validate } from '../api/validate.js';
 
 const template = (data, onSubmit) => html`
 <section id="edit">
@@ -21,30 +21,29 @@ const template = (data, onSubmit) => html`
 `
 
 export async function editView(ctx) {
-    let productId = ctx.params.id;
-
-    let data = await getProductById(productId);
+    const id = ctx.params.id;
+    const data = await getProductById(id);
 
     ctx.render(template(data, onSubmit));
 
     async function onSubmit(e) {
         e.preventDefault();
 
-        let formData = new FormData(e.currentTarget);
-
-        let newData = {
-            name: formData.get('name').trim(),
-            imageUrl: formData.get('imageUrl').trim(),
-            category: formData.get('category').trim(),
-            description: formData.get('description').trim(),
-            price: formData.get('price').trim()
+        const formData = new FormData(e.target);
+        const newData = {
+            name: formData.get('name'),
+            imageUrl: formData.get('imageUrl'),
+            category: formData.get('category'),
+            description: formData.get('description'),
+            price: formData.get('price')
 
         }
 
         if (validate(newData)) {
-            await editProduct(productId, newData);
-            ctx.page.redirect(`/details/${productId}`);
+            await editProduct(id, newData);
+            ctx.page.redirect(`/details/${id}`);
+        }else{
+            alert('Fill all');
         }
-
     }
 }

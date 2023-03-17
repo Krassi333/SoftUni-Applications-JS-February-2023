@@ -1,32 +1,29 @@
-import { getUser } from "../util.js";
+import { getUser } from './util.js';
 
 const baseURL = 'http://localhost:3030';
 
+
 async function request(url, options) {
-debugger
+    debugger
     try {
         let res = await fetch(baseURL + url, options);
 
         if (res.ok == false) {
-            let error = res.json();
-            throw new Error(error.mesage);
-        } 
+            let err = await res.json();
+            throw new Error(err.message);
+        }
 
         if (res.status == 204) {
             return res;
         } else {
-           return  res.json(); 
+            return await res.json();
         }
-
-
-
     } catch (error) {
-        alert(error.mesage);
-
+        alert(error.message);
     }
 }
 
- function getOption(method = 'GET', body) {
+function getOptions(method, body) {
     debugger
     let option = {
         method,
@@ -34,31 +31,35 @@ debugger
     }
 
     if (body) {
-        option.headers['Content-Type'] = 'application/json';
         option.body = JSON.stringify(body);
+        option.headers['Content-Type'] = 'application/json';
     }
 
-    let user = getUser();
+    const user = getUser();
+
     if (user) {
         option.headers['X-Authorization'] = user.accessToken;
     }
-//console.log(option);
+
     return option;
 }
 
 export async function get(url) {
-    let res = await request(url, getOption());
-    return res;
-}
-
-export async function post(url, data) {
-    return await request(url, getOption('POST', data));
+    return request(url, getOptions('GET'));
 }
 
 export async function put(url, data) {
-    return await request(url, getOption('PUT', data));
+    return request(url, getOptions('PUT', data));
+}
+
+export async function post(url, data) {
+    return request(url, getOptions('POST', data));
 }
 
 export async function del(url) {
-    return await request(url, getOption('DELETE'));
+    return request(url, getOptions('DELETE'));
 }
+
+//a02408fc-48b3-4511-abf7-68160d1ade0d  id
+//
+

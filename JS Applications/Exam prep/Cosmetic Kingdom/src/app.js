@@ -1,50 +1,56 @@
-import page from '../node_modules/page/page.mjs';
-import { registerView } from './views/register.js';
 import { render } from '../node_modules/lit-html/lit-html.js';
-import { loginView } from './views/login.js';
-import { catalogView } from './views/catalog.js';
-import { homepageView } from './views/homepage.js';
+import page from '../node_modules/page/page.mjs';
+import {  logout } from './api/data.js';
+import { getUser } from './api/util.js';
 import { addProductView } from './views/addProduct.js';
-import { logout } from './api/data.js';
+import { catalogView } from './views/catalog.js';
 import { detailsView } from './views/details.js';
 import { editView } from './views/edit.js';
+import { homeView } from './views/home.js';
+import { loginView } from './views/login.js';
+import { registerView } from './views/register.js';
 
 
 const root = document.querySelector('main');
 
-function decorateCtx(ctx, next) {
-    ctx.render = (content) => render(content, root);
+function decorateContext(ctx, next) {
+    ctx.render = (htmlResponce) => render(htmlResponce, root);
     ctx.updateNavBar = updateNavBar;
     next();
 }
 
 function updateNavBar() {
-    let user = localStorage.getItem('user');
+    //debugger
+    let user = getUser();
+    let userSection = document.querySelector('div.user');
+    let guestSection = document.querySelector('div.guest');
 
     if (user) {
-        document.querySelector('div.user').style.display = 'inline-block';
-        document.querySelector('div.guest').style.display = 'none';
+        userSection.style.display = 'inline-block';
+        guestSection.style.display = 'none';
     } else {
-        document.querySelector('div.user').style.display = 'none';
-        document.querySelector('div.guest').style.display = 'inline-block';
+        userSection.style.display = 'none';
+        guestSection.style.display = 'inline-block';
     }
 }
 
+updateNavBar();
+page(decorateContext);
 
-page(decorateCtx);
 page.redirect('/');
-page('/', homepageView);
-page('/register', registerView);
+
 page('/login', loginView);
+page('/', homeView);
+page('/register', registerView);
 page('/catalog', catalogView);
-page('/addProduct', addProductView);
-page('/logout', () => {
-    logout();
+page('/logout', async () => {
+    await logout();
     page.redirect('/catalog');
+    updateNavBar();
+
 });
+page('/addProduct', addProductView);
 page('/details/:id', detailsView);
-
 page('/edit/:id', editView);
-
 
 page.start();

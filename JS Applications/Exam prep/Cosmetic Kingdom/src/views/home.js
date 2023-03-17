@@ -8,7 +8,6 @@ const template = () => html`
 </section>
 `
 
-export function homepageView(ctx) {
+export function homeView(ctx) {
     ctx.render(template());
-    ctx.updateNavBar();
 }

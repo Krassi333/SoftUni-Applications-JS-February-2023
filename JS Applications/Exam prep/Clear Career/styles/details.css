@@ -76,3 +76,14 @@ span {
   color: white;
   background: #5c9596;
 }
+
+#apply-btn {
+  text-decoration: none;
+  margin: auto 50px;
+  font-size: 21px;
+  width: 130px;
+  padding: 10px;
+  text-align: center;
+  color: white;
+  background: #5c9596;
+}
