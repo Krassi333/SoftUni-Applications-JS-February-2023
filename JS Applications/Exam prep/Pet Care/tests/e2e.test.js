@@ -176,6 +176,8 @@ describe('E2E tests', function () {
       expect(await page.isVisible('nav >> text=Login')).to.be.false;
       expect(await page.isVisible('nav >> text=Register')).to.be.false;
     });
+    //d071e392d18ee61f0bb16ab6a05df5785b886a6ea5fdf886201b3cb45dfe4e13
+    //d071e392d18ee61f0bb16ab6a05df5785b886a6ea5fdf886201b3cb45dfe4e13
 
     it('Guest user should see correct navigation [ 2.5 Points ]', async () => {
       await page.goto(host);
