@@ -1,8 +1,8 @@
 import { html } from '../../node_modules/lit-html/lit-html.js';
-import { delPost, getPostById } from '../api/data.js';
 import { getUser } from '../api/util.js';
+import { getPostById,getAllDonationsCount ,delPost ,isUserDonated} from '../api/data.js';
 
-const template = (data, isOwner, onDelete) => html`
+const template = (isOwner, data, donations,onDelete,onDonate,isDonated) => html`
 <section id="details-page">
     <h1 class="title">Post Details</h1>
 
@@ -16,49 +16,59 @@ const template = (data, isOwner, onDelete) => html`
                 <p class="post-description">Description: ${data.description}</p>
                 <p class="post-address">Address: ${data.address}</p>
                 <p class="post-number">Phone number: ${data.phone}</p>
-                <p class="donate-Item">Donate Materials: 0</p>
-                <div class="btns">
-
-                    ${isOwner
+                <p class="donate-Item">Donate Materials: ${donations}</p>
+                <!--Edit and Delete are only for creator-->
+                <!--Bonus - Only for logged-in users ( not authors )-->
+                ${ isOwner
                 ? html`
+                 <div class="btns">
                     <a href="/edit/${data._id}" class="edit-btn btn">Edit</a>
-                    <a href="#" @click=${onDelete} class="delete-btn btn">Delete</a>
-
-                    <!--Bonus - Only for logged-in users ( not authors )-->
-                    <a href="#" class="donate-btn btn">Donate</a>
-                    `
-                : null}
-
+                    <a href="${onDelete}" class="delete-btn btn">Delete</a>
+                   
                 </div>
-
+    `
+                                :html`
+                                 ${!isDonated
+                                ? html`
+                                 <a href="${onDonate}" class="donate-btn btn">Donate</a>
+                                `
+                            :null}
+                                `}
+               
             </div>
         </div>
     </div>
 </section>
 `
+export async function detailsView(ctx){
+    let isOwner=false;
+    const user=getUser();
+    const id=ctx.params.id;
+    console.log(id);
+    const data=await getPostById(id);
+const donations=await getAllDonationsCount();
+const isDonated= await isUserDonated(id,user._id);
 
-export async function detailsView(ctx) {
-    const id = ctx.params.id;
-    const data = await getPostById(id);
-
-    let isOwner = false;
-    let user = getUser();
-
-    if (user && user._id == data._ownerId) {
-        isOwner = true;
+    if(user){
+        isOwner=true;
     }
 
-    ctx.render(template(data, isOwner, onDelete));
+    ctx.render(template(isOwner, data, donations,onDelete,onDonate,isDonated))
 
-    async function onDelete(e) {
-        e.preventDefault();
-        
-        let confirmedResponce = confirm ('Are you sure you want to delete this post?');
+    async function onDonate(e){
+e.preventDefault();
 
-        if (confirmedResponce) {
-            await delPost(id);
-            ctx.page.redirect('/catalog');
-        }
-
+await makeDonation(id);
+ctx.page.redirect(`/details/${id}`);
     }
+
+    async function onDelete(){
+const confirmRes=confirm('Are you sure you want to delete this post?');
+
+if(confirmRes){
+    await delPost(id);
+    ctx.page.redirect('/catalog');
+}
+    }
+
 }
