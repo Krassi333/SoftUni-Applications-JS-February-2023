@@ -6,6 +6,7 @@ export  function getUser() {
     }
 }
 
+
 export  function setUser(data) {
     localStorage.setItem('user', JSON.stringify(data));
 }
