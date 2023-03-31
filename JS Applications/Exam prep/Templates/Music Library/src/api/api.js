@@ -4,7 +4,7 @@ const baseURL = 'http://localhost:3030';
 
 
 async function request(url, options) {
-    debugger
+    //debugger
     try {
         let res = await fetch(baseURL + url, options);
 
@@ -24,7 +24,7 @@ async function request(url, options) {
 }
 
 function getOptions(method, body) {
-    debugger
+    //debugger
     let option = {
         method,
         headers: {}

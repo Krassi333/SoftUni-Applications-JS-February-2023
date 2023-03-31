@@ -37,7 +37,7 @@ function updateNavBar() {
 updateNavBar();
 page(decorateContext);
 
-page.redirect('/');
+page.redirect('/catalog');
 
 page('/login', loginView);
 //page('/', homeView);

@@ -23,7 +23,7 @@ const template = (isOwner, data, donations,onDelete,onDonate,isDonated) => html`
                 ? html`
                  <div class="btns">
                     <a href="/edit/${data._id}" class="edit-btn btn">Edit</a>
-                    <a href="${onDelete}" class="delete-btn btn">Delete</a>
+                    <a href="" @click=${onDelete} class="delete-btn btn">Delete</a>
                    
                 </div>
     `
@@ -67,7 +67,7 @@ const confirmRes=confirm('Are you sure you want to delete this post?');
 
 if(confirmRes){
     await delPost(id);
-    ctx.page.redirect('/catalog');
+    ctx.page.redirect(`/catalog`);
 }
     }
 
